@@ -39,7 +39,7 @@ func handlerRegister(s *state, cmd command) error {
 	username := cmd.Args[0]
 
 	ctx := context.Background()
-	user, err := s.db.CreateUser(ctx, database.CreateUserParams{uuid.New(), time.Now(), time.Now(), username})
+	user, err := s.db.CreateUser(ctx, database.CreateUserParams{ID: uuid.New(), CreatedAt: time.Now(), UpdatedAt: time.Now(), Name: username})
 	if err != nil {
 		log.Fatalf("User with name '%s' already exists!", username)
 	}
@@ -103,11 +103,11 @@ func handlerAddFeed(s *state, cmd command, user database.User) error {
 		log.Fatal("Need 2 args")
 	}
 	ctx := context.Background()
-	feed, err := s.db.CreateFeed(ctx, database.CreateFeedParams{uuid.New(), time.Now(), time.Now(), cmd.Args[0], cmd.Args[1], user.ID})
+	feed, err := s.db.CreateFeed(ctx, database.CreateFeedParams{ID: uuid.New(), CreatedAt: time.Now(), UpdatedAt: time.Now(), Name: cmd.Args[0], Url: cmd.Args[1], UserID: user.ID})
 	if err != nil {
 		log.Fatal("Couldn't create new feed: %w", err)
 	}
-	_, err = s.db.CreateFeedFollow(context.Background(), database.CreateFeedFollowParams{uuid.New(), time.Now(), time.Now(), user.ID, feed.ID})
+	_, err = s.db.CreateFeedFollow(context.Background(), database.CreateFeedFollowParams{ID: uuid.New(), CreatedAt: time.Now(), UpdatedAt: time.Now(), UserID: user.ID, FeedID: feed.ID})
 	if err != nil {
 		return fmt.Errorf("Couldn't create a new feedFollow record: %w\n", err)
 	}
@@ -149,7 +149,7 @@ func handlerFollow(s *state, cmd command, user database.User) error {
 	if err != nil {
 		return fmt.Errorf("No feed found for URL: %s", url)
 	}
-	feedFollow, err := s.db.CreateFeedFollow(context.Background(), database.CreateFeedFollowParams{uuid.New(), time.Now(), time.Now(), user.ID, feed.ID})
+	feedFollow, err := s.db.CreateFeedFollow(context.Background(), database.CreateFeedFollowParams{ID: uuid.New(), CreatedAt: time.Now(), UpdatedAt: time.Now(), UserID: user.ID, FeedID: feed.ID})
 	if err != nil {
 		return fmt.Errorf("Couldn't create a new feedFollow record: %w\n", err)
 	}
@@ -168,7 +168,7 @@ func handlerUnfollow(s *state, cmd command, user database.User) error {
 	if err != nil {
 		return fmt.Errorf("No feed found for URL: %s", url)
 	}
-	err = s.db.DeleteFeedFollowRecord(context.Background(), database.DeleteFeedFollowRecordParams{user.ID, feed.ID})
+	err = s.db.DeleteFeedFollowRecord(context.Background(), database.DeleteFeedFollowRecordParams{UserID: user.ID, FeedID: feed.ID})
 	if err != nil {
 		return fmt.Errorf("Couldn't create a new feedFollow record: %w\n", err)
 	}
