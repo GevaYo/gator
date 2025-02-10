@@ -26,7 +26,7 @@ func (c *commands) register(name string, f func(*state, command) error) {
 func (c *commands) run(s *state, cmd command) error {
 	handler, exist := c.handlers[cmd.Name]
 	if !exist {
-		return fmt.Errorf("Unknwon command: %v", cmd.Name)
+		return fmt.Errorf("unknwon command: %v", cmd.Name)
 	}
 	return handler(s, cmd)
 }

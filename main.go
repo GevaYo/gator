@@ -18,6 +18,9 @@ type state struct {
 
 func main() {
 	cfg, err := config.Read()
+	if err != nil {
+		fmt.Println("error reading config: %w", err)
+	}
 	db, err := sql.Open("postgres", cfg.DB_Url)
 	dbQueries := database.New(db)
 	if err != nil {

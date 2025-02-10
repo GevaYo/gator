@@ -33,7 +33,6 @@ func fetchFeed(ctx context.Context, feedURL string) (*RSSFeed, error) {
 	}
 
 	req.Header.Set("User-Agent", "gator")
-
 	res, err := client.Do(req)
 	if err != nil {
 		log.Fatal(err)
